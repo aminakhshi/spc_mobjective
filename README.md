@@ -41,14 +41,6 @@ For AUTO-07p users, follow the official installation guide, set the `AUTO_DIR` e
 
 ## Instructions for use
 
-* **Prepare experimental recordings**: clean and center the raw traces by pointing `Figures/Fig1.py` to your `data/` directory.
-
-  ```bash
-  python Figures/Fig1.py --data_root /path/to/raw_ephys --results_root results
-  ```
-
-  This produces corrected pickles in `results/corrected_data/` that feed the downstream pipeline.
-
 * **Optimize a single-neuron model fit**: invoke the CLI with your chosen model, solver, parameter ranges, and configuration.
 
   ```bash
