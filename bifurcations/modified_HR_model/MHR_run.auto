@@ -1,0 +1,38 @@
+#=============
+# Modified Hindmarsh-Rose Model
+#=============
+
+print "\n***Generate starting data***"
+
+start = run(e='MHR',c='MHR.1',UZSTOP={1:[-100, -2.6]}, NMX=10000, DS=-0.0001)
+start = start + run(e='MHR', c='MHR.1', DS=0.0001, DSMAX=0.4, DSMIN=1e-4, NMX=10000, UZSTOP={1:[100]}, NPR=1000)
+save(start, 'ss')
+
+print "\n***Continuation from HB1***"
+hb1 = run(start('HB1'), IPS=2, ICP=[1,11,9], DS=0.1, DSMIN=1e-04, DSMAX=0.4, NMX=100000, SP=['BP0', 'LP0'])
+save(hb1, 'hb1')
+
+print "\n***Continuation from HB2***"
+hb2 = run(start('HB6'), IPS=2, ICP=[1,11,9], DS=0.001, DSMIN=1e-04, DSMAX=0.2, NMX=5000, SP=['BP0', 'LP3'], NPR=1)
+save(hb2, 'hb2')
+
+print "\n***Continuation from HB3***"
+hb3 = run(start('HB2'), IPS=2, ICP=[1,11,9], DS=0.1, DSMIN=1e-04, DSMAX=0.4, NMX=100000, SP=['BP0', 'LP0'])
+save(hb3, 'hb3')
+
+print "\n***Continuation from HB4***"
+hb4 = run(start('HB3'), IPS=2, ICP=[1,11,9], DS=0.1, DSMIN=1e-04, DSMAX=0.4, NMX=100000, SP=['BP0', 'LP0'])
+save(hb4, 'hb4')
+
+print "\n***Continuation from HB5***"
+hb5 = run(start('HB4'), IPS=2, ICP=[1,11,9], DS=0.001, DSMIN=1e-04, DSMAX=0.4, NMX=10000, SP=['BP0', 'LP0'])
+save(hb5, 'hb5')
+
+print "\n***Continuation from HB6***"
+hb6 = run(start('HB5'), IPS=2, ICP=[1,11,9], DS=0.001, DSMIN=1e-04, NMX=10000, SP=['BP0', 'LP0'])
+save(hb6, 'hb6')
+
+
+plot(start+hb1+hb2+hb3+hb4+hb6)
+
+

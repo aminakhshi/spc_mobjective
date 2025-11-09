@@ -1,0 +1,57 @@
+simulation_config:
+  dt: 0.01
+  fs: 100000.0
+  t_span: [0, 7000]
+  y0: [0.02, 0.02, 0.02, 0.5]
+  noise_type: "white"
+  seed: 1
+
+data_feature_config:
+  cutoff: [0.0, 5.0]
+  sta_win: 10.0
+  filter: 5.0
+  dv_cutoff: 20.0
+  max_interval: 0.005
+  min_height: 2.0
+  min_peak: -30.0
+  thresh_frac: 0.05
+
+model_feature_config:
+  cutoff: [2.0, 7.0]
+  sta_win: 10.0
+  filter: 5.0
+  dv_cutoff: 2.0
+  max_interval: 0.005
+  min_height: 1.0
+  min_peak: -1.0
+  thresh_frac: 0.05
+  fs: 100000.0
+
+optimizer_config:
+  n_trials: 10000
+  n_jobs: -1
+  storage: "postgresql://admin:admin@localhost/optuna_db"
+  load_if_exists: true
+  direction: "minimize"
+  directions: null
+  seed: 0
+  sampler: null
+  pruner: null
+  w_spike_features: null
+  w_spiketime_features: null
+  max_loss: 100000.0
+  early_stop_threshold: 0.001
+  spike_feature_cols:
+    - threshold_v
+    - peak_v
+    - trough_v
+    - upstroke_v
+    - downstroke_v
+    - adp_v
+  spiketime_feature_cols:
+    - avg_firing_rate
+    - std_isi
+    - mean_isi
+    - median_isi
+    - cv_isi
+    - burst_frac

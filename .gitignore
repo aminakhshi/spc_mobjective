@@ -2,6 +2,7 @@
 results/*
 logs/*
 src/misc/*
+Figures/*.py
 # misc/*
 # single_run_compute_canada.sh
 

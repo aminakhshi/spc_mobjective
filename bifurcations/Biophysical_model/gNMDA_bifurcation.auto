@@ -1,0 +1,65 @@
+start=run(e='ab',c='ab.1',UZSTOP={1:[-500,1000]})
+start=start+run(e='ab',c='ab.1', UZSTOP={1:[-500,1000]},DS='-')
+r1 = run(start('HB1'),IPS=2, ICP=[1,11,9])
+nmda2 = run(start('LP1'),ISW=2, ICP=[1,3],NMX=1000000,UZSTOP={1:[0,1000]})
+# nmda2=nmda2+r(start('LP1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000]},NMX=1000000,DS='-')
+nmda2=nmda2+r(start('LP1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000],3:[100]},NMX=1000000,DS='-')
+
+""
+# when we find there is notinght special there we can limit out uzr value and run again
+nmda2=r(start('LP1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000],3:[0,100]},NMX=1000000)
+nmda2=nmda2+r(start('LP1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000],3:[0,100]},NMX=1000000,DS='-')
+""
+
+nmda3=r(start('HB1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000],3:[0,100]},NMX=1000000)
+# we can do this backward but I_app<0 doesn't make sense that much (and maybe g_sk<0) so we don't need it actually
+# nmda3=nmda3+r(start('HB1'),ISW=2,ICP=[1,3],UZSTOP={1:[0,1000],3:[0,100]},NMX=1000000,DS='-')
+
+
+""
+continuation from periodic manifold
+First we start with small NMX to see what's going on then we can increase it
+NMX gives the step size
+NPR gives the solutions AUTO has found
+PT in the terminal shows the number of NMX
+""
+nmda4=r(r1('PD1'),ISW=2,ICP=[1,3,11],NMX=100)
+nmda5=r(nmda4)
+nmda5=r(nmda4,NPR=10)
+nmda5=r(nmda4,NPR=10,NMX=1000000)
+nmda5=r(nmda4,NPR=10,NMX=1000000,UZSTOP={1:[0,1000],3:[0,100]})
+ 
+pl(nmda2+nmda3+nmda5)
+ 
+nmda6=r(r1('LP1'),ISW=2,ICP=[1,3,11],NMX=100)
+nmda7=r(nmda6,NPR=10)
+nmda7=r(nmda6,NPR=0,NMX=1000000,UZSTOP={1:[0,1000],3:[0,100]})
+pl(nmda2+nmda3+nmda5+nmda7)
+nmda7=r(nmda6,NPR=10,NMX=1000000,UZSTOP={1:[0,1000],3:[0,100]})
+nmda7=r(nmda6,NPR=0,NMX=1000000,UZSTOP={1:[0,1000],3:[0,100]},DS='-')
+pl(nmda2+nmda3+nmda5+nmda7)
+
+# this run will give you signal aboort becauese it will not converge at I=0
+s7=r(s6,NPR=0,NMX=1000000,UZSTOP={1:[1000],2:[0,100]},DS='-')
+# to sovle it 
+s7=r(s6,NPR=100,NMX=1000000,UZSTOP={1:[1000],2:[0,100]},DS='-')
+
+s7=r(s6,NPR=0,NMX=1000000,UZSTOP={1:[1000],2:[0,100]},DS='-')
+s7=r(s6,NPR=100,NMX=1000000,UZSTOP={1:[1000],2:[0,100]})
+pl(s2+s3+s5+s7)
+
+
+# to find SNIC or homoclinic bifurcation, notice that PAR(11) will increase as the period increases
+r10 = run(start('HB1'),IPS=2, ICP=[1,11,9],NMX=1000000,UZSTOP={11:[1000]})
+r10 = run(start('HB1'),IPS=2, ICP=[1,11,9],NMX=1000000,UZSTOP={11:[1000]},ILP=0)
+
+# this will find 3 PDs and 3 LPs from the continuation of HB  
+r10 = run(start('HB1'),IPS=2, ICP=[1,11,9],NMX=1000000,UZSTOP={11:[1000]},DSMAX=0.1,STOP=['LP3'])
+
+# ILP=0 ignores the LP points
+r11=r(r10('UZ1'),ICP=[1,4],NMX=100,NPR=10)
+r11=r(r10('UZ1'),ICP=[1,4],NMX=100000,NPR=100,UZSTOP={1:[0,1000],4:[0,100]})
+r11=r11+r(r10('UZ1'),ICP=[1,4],NMX=100000,NPR=100,UZSTOP={1:[0,1000],4:[0,100]},DS='-')
+pl(r2+r3+r5+r7+r11)
+
+# you can see that homoclinic curve is almost parallel with the saddle so you only need to mention ok this is SNIC and not plot with others (pl(r2+r3+r5+r7))

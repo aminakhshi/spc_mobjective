@@ -1,0 +1,56 @@
+
+#=============
+# AUTO Demo ab
+#=============
+
+#=============
+# AUTO Demo ab
+#=============
+
+print "\n***Generate starting data***"
+start=run(e='ab',c='ab.1',UZSTOP={1:[-500,1000]}, DS=0.001, DSMIN=0.000001, DSMAX=0.01, NMX=1000000)
+start=start+run(e='ab',c='ab.1',UZSTOP={1:[-500,1000]}, DS=-0.001, DSMIN=0.000001, DSMAX=0.01, NMX=1000000, SP=['BP0'])
+save(start,'start')
+
+print "\n***Compute stationary solution families***"
+r1 = []
+for solution in start("LP"):
+    r1 = r1 + run(solution,c='ab.2')
+
+print "\n***Relabel and save the output files***"
+r1=rl(r1)
+sv(r1,'r1')
+
+r2 = []
+print "\n***Compute periodic solution families***"
+for solution in start("HB"):
+    r2 = r2 + run(solution,c='ab.3')
+    
+
+print "\n***Relabel and save the output files***"
+r2=rl(r2)
+sv(r2,'r2')
+
+print "\n***Compute solution of periodic orbit families***"
+r3 = []
+for solution in r2("LP"):
+    r3 = r3 + run(solution,ISW=2,ICP=[1,2])
+
+print "\n***Relabel and save the output files***"
+r3=rl(r3)
+sv(r3,'r3')
+
+print "\n***Compute solution of periodic orbit families***"
+r4 = []
+for solution in r2("PD"):
+    r4 = r4 + run(solution,ISW=-1,ICP=[1,2])
+
+print "\n***Relabel and save the output files***"
+r4=rl(r4)
+sv(r4,'r4')
+
+
+print "\n***Clean the directory***"
+#cl()
+
+
